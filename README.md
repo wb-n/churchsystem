@@ -1,1 +1,1 @@
-# inheritance
+# System for church offering allocations
