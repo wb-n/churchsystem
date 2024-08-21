@@ -29,9 +29,14 @@ print(f"Amount collected for Bishop: Ksh.{allowance_collected}")
 # Calculate the amount collected for member needs
 member_needs_collected = member_needs * total_collected
 print(f"Amount collected for member needs: Ksh.{member_needs_collected}")
-def member_needs_collected():
-
-
+def zamember():
+    print(input("Press enter to input number of needy members."))
+    number = int(input("Number of members needing help: "))
+    if number > 0:
+        wape = member_needs_collected/number
+    return wape
+pewa = zamember()
+print(f"Give each needy member: Ksh.{pewa}")
 # Calculate the amount collected for miscellaneous
 miscellaneous_collected = miscellaneous * total_collected
 print(f"Amount collected for miscellaneous: Ksh.{miscellaneous_collected}")
