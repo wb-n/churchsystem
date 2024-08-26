@@ -8,13 +8,13 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f4f4f4;
+            background-color: #720c80;
         }
         .container {
-            background: #fff;
+            background: #720c80;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(32, 16, 34, 0.1);
         }
         input[type="number"] {
             width: 100%;
@@ -24,7 +24,7 @@
             border-radius: 4px;
         }
         button {
-            background-color: #4CAF50;
+            background-color: #b80883;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -135,7 +135,110 @@
             document.getElementById('results').style.display = 'block';
         }
     </script>
+
+    <script>
+        // Function to animate the button on hover
+document.querySelector('button').addEventListener('mouseover', function() {
+    this.style.transform = 'scale(1.1)';
+    this.style.transition = 'transform 0.2s ease-in-out';
+});
+
+document.querySelector('button').addEventListener('mouseout', function() {
+    this.style.transform = 'scale(1)';
+});
+
+// Function to animate the input fields when focused
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.style.backgroundColor = '#e8f0fe';
+        this.style.transition = 'background-color 0.3s ease-in-out';
+    });
+
+    input.addEventListener('blur', function() {
+        this.style.backgroundColor = '#ffffff';
+    });
+});
+
+// Function to animate the result display
+function showResults() {
+    const results = document.getElementById('results');
+    results.style.opacity = '0';
+    results.style.display = 'block';
+    setTimeout(() => {
+        results.style.opacity = '1';
+        results.style.transition = 'opacity 0.5s ease-in-out';
+    }, 100);
+}
+
+// Modify the calculate function to include the animation
+function calculate() {
+    const billsAmount = parseFloat(document.getElementById('billsAmount').value);
+    const totalCollected = parseFloat(document.getElementById('totalCollected').value);
+
+    if (isNaN(billsAmount) || isNaN(totalCollected)) {
+        alert("Please enter valid numbers for all fields.");
+        return;
+    }
+
+    // Percentages
+    const bills = 0.30;
+    const allowance = 0.50;
+    const memberNeeds = 0.10;
+    const miscellaneous = 0.10;
+
+    // Calculate amounts
+    const billsCollected = bills * totalCollected;
+    const allowanceCollected = allowance * totalCollected;
+    const memberNeedsCollected = memberNeeds * totalCollected;
+    const miscellaneousCollected = miscellaneous * totalCollected;
+
+    // Display bill results
+    document.getElementById('billsCollected').innerText = `Amount collected for bills: Ksh.${billsCollected.toFixed(2)}`;
+
+    let excessBillBalance = billsCollected - billsAmount;
+    if (excessBillBalance > 0) {
+        document.getElementById('excessBillBalance').innerText = `Excess balance for bills: Ksh.${excessBillBalance.toFixed(2)}`;
+    } else {
+        excessBillBalance = 0;
+        document.getElementById('excessBillBalance').innerText = "No Excess bill balance";
+    }
+
+    document.getElementById('allowanceCollected').innerText = `Amount collected for Bishop's allowance: Ksh.${allowanceCollected.toFixed(2)}`;
+    document.getElementById('miscellaneousCollected').innerText = `Amount collected for miscellaneous: Ksh.${miscellaneousCollected.toFixed(2)}`;
+
+    // Miscellaneous Usage
+    const misUsed = parseFloat(prompt("Enter amount used for miscellaneous activity (Ksh):", "0"));
+    let miscellaneousUsedUp;
+    if (misUsed <= miscellaneousCollected) {
+        miscellaneousUsedUp = miscellaneousCollected - misUsed;
+        document.getElementById('miscellaneousUsedUp').innerText = `Miscellaneous remaining: Ksh.${miscellaneousUsedUp.toFixed(2)}`;
+    } else {
+        const overdraw = misUsed - miscellaneousCollected;
+        if (overdraw <= excessBillBalance) {
+            miscellaneousUsedUp = 0;
+            excessBillBalance -= overdraw;
+            document.getElementById('miscellaneousUsedUp').innerText = `Overdraw of Ksh.${overdraw.toFixed(2)} covered by excess bill balance. New excess balance: Ksh.${excessBillBalance.toFixed(2)}`;
+        } else {
+            miscellaneousUsedUp = overdraw - excessBillBalance;
+            document.getElementById('miscellaneousUsedUp').innerText = `Overdraw exceeds available balance by Ksh.${miscellaneousUsedUp.toFixed(2)}. Please adjust budget.`;
+        }
+    }
+
+    // Member Needs Distribution
+    document.getElementById('memberNeedsCollected').innerText = `Amount collected for member needs: Ksh.${memberNeedsCollected.toFixed(2)}`;
+    const numberOfNeedyMembers = parseInt(prompt("Enter number of needy members:", "0"));
+    if (numberOfNeedyMembers > 0) {
+        const perMemberAmount = memberNeedsCollected / numberOfNeedyMembers;
+        document.getElementById('needyMembersDistribution').innerText = `Each needy member gets: Ksh.${perMemberAmount.toFixed(2)}`;
+    } else {
+        const saved = memberNeedsCollected + miscellaneousCollected;
+        document.getElementById('needyMembersDistribution').innerText = `No needy members. Save amount: Ksh.${saved.toFixed(2)}`;
+    }
+
+    // Show results with animation
+    showResults();
+}
+    </script>
 </body>
-<link rel="stylesheet" href="styles.css">
 </html>
 
