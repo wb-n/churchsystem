@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Church Offering Calculation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            background: #e7ffe7;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #d4d4d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Church Offering Calculation</h2>
+
+        <label for="billsAmount">Total Bill Amount for Electricity and Water (Ksh):</label>
+        <input type="number" id="billsAmount" placeholder="Enter total bill amount">
+
+        <label for="totalCollected">Total Offerings Collected (Ksh):</label>
+        <input type="number" id="totalCollected" placeholder="Enter total offerings">
+
+        <button onclick="calculate()">Calculate</button>
+
+        <div id="results" class="output" style="display:none;">
+            <p id="billsCollected"></p>
+            <p id="excessBillBalance"></p>
+            <p id="allowanceCollected"></p>
+            <p id="miscellaneousCollected"></p>
+            <p id="miscellaneousUsedUp"></p>
+            <p id="memberNeedsCollected"></p>
+            <p id="needyMembersDistribution"></p>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const billsAmount = parseFloat(document.getElementById('billsAmount').value);
+            const totalCollected = parseFloat(document.getElementById('totalCollected').value);
+
+            if (isNaN(billsAmount) || isNaN(totalCollected)) {
+                alert("Please enter valid numbers for all fields.");
+                return;
+            }
+
+            // Percentages
+            const bills = 0.30;
+            const allowance = 0.50;
+            const memberNeeds = 0.10;
+            const miscellaneous = 0.10;
+
+            // Calculate amounts
+            const billsCollected = bills * totalCollected;
+            const allowanceCollected = allowance * totalCollected;
+            const memberNeedsCollected = memberNeeds * totalCollected;
+            const miscellaneousCollected = miscellaneous * totalCollected;
+
+            // Display bill results
+            document.getElementById('billsCollected').innerText = `Amount collected for bills: Ksh.${billsCollected.toFixed(2)}`;
+
+            let excessBillBalance = billsCollected - billsAmount;
+            if (excessBillBalance > 0) {
+                document.getElementById('excessBillBalance').innerText = `Excess balance for bills: Ksh.${excessBillBalance.toFixed(2)}`;
+            } else {
+                excessBillBalance = 0;
+                document.getElementById('excessBillBalance').innerText = "No Excess bill balance";
+            }
+
+            document.getElementById('allowanceCollected').innerText = `Amount collected for Bishop's allowance: Ksh.${allowanceCollected.toFixed(2)}`;
+            document.getElementById('miscellaneousCollected').innerText = `Amount collected for miscellaneous: Ksh.${miscellaneousCollected.toFixed(2)}`;
+
+            // Miscellaneous Usage
+            const misUsed = parseFloat(prompt("Enter amount used for miscellaneous activity (Ksh):", "0"));
+            let miscellaneousUsedUp;
+            if (misUsed <= miscellaneousCollected) {
+                miscellaneousUsedUp = miscellaneousCollected - misUsed;
+                document.getElementById('miscellaneousUsedUp').innerText = `Miscellaneous remaining: Ksh.${miscellaneousUsedUp.toFixed(2)}`;
+            } else {
+                const overdraw = misUsed - miscellaneousCollected;
+                if (overdraw <= excessBillBalance) {
+                    miscellaneousUsedUp = 0;
+                    excessBillBalance -= overdraw;
+                    document.getElementById('miscellaneousUsedUp').innerText = `Overdraw of Ksh.${overdraw.toFixed(2)} covered by excess bill balance. New excess balance: Ksh.${excessBillBalance.toFixed(2)}`;
+                } else {
+                    miscellaneousUsedUp = overdraw - excessBillBalance;
+                    document.getElementById('miscellaneousUsedUp').innerText = `Overdraw exceeds available balance by Ksh.${miscellaneousUsedUp.toFixed(2)}. Please adjust budget.`;
+                }
+            }
+
+            // Member Needs Distribution
+            document.getElementById('memberNeedsCollected').innerText = `Amount collected for member needs: Ksh.${memberNeedsCollected.toFixed(2)}`;
+            const numberOfNeedyMembers = parseInt(prompt("Enter number of needy members:", "0"));
+            if (numberOfNeedyMembers > 0) {
+                const perMemberAmount = memberNeedsCollected / numberOfNeedyMembers;
+                document.getElementById('needyMembersDistribution').innerText = `Each needy member gets: Ksh.${perMemberAmount.toFixed(2)}`;
+            } else {
+                const saved = memberNeedsCollected + miscellaneousCollected;
+                document.getElementById('needyMembersDistribution').innerText = `No needy members. Save amount: Ksh.${saved.toFixed(2)}`;
+            }
+
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+</body>
+<link rel="stylesheet" href="styles.css">
+</html>
+

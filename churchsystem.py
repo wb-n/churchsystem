@@ -67,3 +67,5 @@ def za_member():
         print(f"No need for giving to needy members. Instead, save \nKsh.{saved}")
     return
 za_member()
+
+print("#In His Presence!")
